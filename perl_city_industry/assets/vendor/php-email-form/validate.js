@@ -1,8 +1,4 @@
-/**
-* PHP Email Form Validation - v3.2
-* URL: https://bootstrapmade.com/php-email-form/
-* Author: BootstrapMade.com
-*/
+ 
 (function () {
   "use strict";
 
@@ -21,31 +17,35 @@
         displayError(thisForm, 'The form action property is not set!')
         return;
       }
-      thisForm.querySelector('.loading').classList.add('d-block');
-      thisForm.querySelector('.error-message').classList.remove('d-block');
-      thisForm.querySelector('.sent-message').classList.remove('d-block');
-
-      let formData = new FormData( thisForm );
-
-      if ( recaptcha ) {
-        if(typeof grecaptcha !== "undefined" ) {
-          grecaptcha.ready(function() {
-            try {
-              grecaptcha.execute(recaptcha, {action: 'php_email_form_submit'})
-              .then(token => {
-                formData.set('recaptcha-response', token);
-                php_email_form_submit(thisForm, action, formData);
-              })
-            } catch(error) {
-              displayError(thisForm, error)
-            }
-          });
-        } else {
-          displayError(thisForm, 'The reCaptcha javascript API url is not loaded!')
+ 
+      var toastMixin = Swal.mixin({
+        toast: true,
+        icon: 'success',
+        title: 'General Title',
+        animation: false,
+        position: 'top-right',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
         }
-      } else {
-        php_email_form_submit(thisForm, action, formData);
-      }
+      });
+
+      document.querySelector(".third").addEventListener('click', function(){
+        toastMixin.fire({
+          title: 'Thank You for submitting your form!',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          // toast: true,
+          animation: true,
+          position: 'top-right',
+        });
+      });
+      
     });
   });
 
@@ -59,7 +59,8 @@
       if( response.ok ) {
         return response.text()
       } else {
-        throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
+        // throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
+        
       }
     })
     .then(data => {
@@ -68,7 +69,7 @@
         thisForm.querySelector('.sent-message').classList.add('d-block');
         thisForm.reset(); 
       } else {
-        throw new Error(data ? data : 'Form submission failed and no error message returned from: ' + action); 
+        // throw new Error(data ? data : 'Form submission failed and no error message returned from: ' + action); 
       }
     })
     .catch((error) => {
